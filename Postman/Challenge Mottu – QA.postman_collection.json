@@ -1,0 +1,1430 @@
+{
+	"info": {
+		"_postman_id": "3395c8a8-529e-4ad7-a8c2-a6b0b744bd5b",
+		"name": "Challenge Mottu – QA",
+		"description": "Automação de testes para API REST desenvolvida em Spring Boot para o sistema Mottu. Este projeto contém uma coleção completa de testes automatizados para validar todos os endpoints da API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39896542"
+	},
+	"item": [
+		{
+			"name": "Cliente – Criar",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 201 (Created)",
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idCliente');",
+							"    pm.expect(jsonData).to.have.property('nome');",
+							"    pm.expect(jsonData).to.have.property('email');",
+							"    pm.expect(jsonData).to.have.property('cpf');",
+							"});",
+							"",
+							"// Save clienteId to environment (outside of test block for reliability)",
+							"if (pm.response.code === 201) {",
+							"    try {",
+							"        var jsonData = pm.response.json();",
+							"        if (jsonData.idCliente) {",
+							"            pm.environment.set(\"clienteId\", jsonData.idCliente);",
+							"            console.log(\"✓ Cliente ID saved to environment: \" + jsonData.idCliente);",
+							"            ",
+							"            // Test to verify the variable was set correctly",
+							"            pm.test(\"clienteId saved to environment\", function () {",
+							"                pm.expect(pm.environment.get(\"clienteId\")).to.equal(jsonData.idCliente);",
+							"            });",
+							"        } else {",
+							"            console.error(\"✗ Response does not contain idCliente property\");",
+							"            pm.test(\"clienteId exists in response\", function () {",
+							"                pm.expect(jsonData).to.have.property('idCliente');",
+							"            });",
+							"        }",
+							"    } catch (e) {",
+							"        console.error(\"✗ Error parsing response or setting clienteId: \" + e.message);",
+							"        pm.test(\"Error setting clienteId\", function () {",
+							"            pm.expect.fail(\"Failed to parse response or set clienteId: \" + e.message);",
+							"        });",
+							"    }",
+							"} else {",
+							"    console.warn(\"⚠ Status code is not 201, skipping clienteId save\");",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Ana Carol\",\r\n  \"email\": \"AnaCg@gmail.com\",\r\n  \"cpf\": \"025.462.884-23\",\r\n  \"telefone\": \"11999999999\",\r\n  \"dataNascimento\": \"2001-10-29\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario - criar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 201 (Created)",
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idFuncionario');",
+							"    pm.expect(jsonData).to.have.property('nomeUsuario');",
+							"});",
+							"",
+							"// Save funcionarioId to environment",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.idFuncionario) {",
+							"    pm.environment.set(\"funcionarioId\", jsonData.idFuncionario);",
+							"    console.log(\"Funcionario ID saved to environment: \" + jsonData.idFuncionario);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Carlos Silva\",\r\n  \"email\": \"carlos.silva@gmail.com\",\r\n  \"senha\": \"senha123\",\r\n  \"nomeUsuario\": \"carlos123\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/funcionarios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"funcionarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Moto - criar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 201 (Created)",
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idMoto');",
+							"    pm.expect(jsonData).to.have.property('modelo');",
+							"    pm.expect(jsonData).to.have.property('placa');",
+							"});",
+							"",
+							"// Save motoId to environment",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.idMoto) {",
+							"    pm.environment.set(\"motoId\", jsonData.idMoto);",
+							"    console.log(\"Moto ID saved to environment: \" + jsonData.idMoto);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"modelo\": \"Honda CB 500\",\r\n    \"placa\": \"ABC1323\",\r\n    \"status\": \"Disponível\",\r\n    \"setor\": \"Bom\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/motos",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"motos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patio - criar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code should be 201 (Created)",
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idPatio');",
+							"",
+							"});",
+							"",
+							"// Save patioId to environment",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.idPatio) {",
+							"    pm.environment.set(\"patioId\", jsonData.idPatio);",
+							"    console.log(\"Patio ID saved to environment: \" + jsonData.idPatio);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"localizacao\": \"São Paulo - Centro\",\r\n    \"quantidadeVagas\": 50\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/patios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"patios"
+					]
+				},
+				"description": "{  \n\"localizacao\": \"São Paulo - Centro\",  \n\"quantidadeVagas\": 50  \n}"
+			},
+			"response": []
+		},
+		{
+			"name": "Moto - get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Parse response once",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test: Response has content array",
+							"pm.test(\"Response has content array\", function () {",
+							"    pm.expect(jsonData).to.have.property('content');",
+							"    pm.expect(jsonData.content).to.be.an('array');",
+							"});",
+							"",
+							"// Test: Array elements have required properties",
+							"pm.test(\"Array elements have required properties\", function () {",
+							"    if (jsonData.content && jsonData.content.length > 0) {",
+							"        jsonData.content.forEach(function(moto) {",
+							"            pm.expect(moto).to.have.property('idMoto');",
+							"            pm.expect(moto).to.have.property('modelo');",
+							"            pm.expect(moto).to.have.property('placa');",
+							"        });",
+							"    }",
+							"});",
+							"",
+							"// Save first motoId to environment if available",
+							"if (jsonData.content && jsonData.content.length > 0 && jsonData.content[0].idMoto) {",
+							"    pm.environment.set(\"motoId\", jsonData.content[0].idMoto);",
+							"    console.log(\"First Moto ID saved to environment: \" + jsonData.content[0].idMoto);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/motos",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"motos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario - get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code 200 - Lista de Funcionários\", function () {",
+							"  pm.expect(pm.response.code, \"Status code should be 200\").to.eql(200);",
+							"});",
+							"",
+							"let body = null;",
+							"try {",
+							"  body = pm.response.json();",
+							"} catch (e) {",
+							"  body = null;",
+							"  console.log(\"Falha ao fazer parse do JSON:\", e);",
+							"}",
+							"",
+							"pm.test(\" JSON válido\", function () {",
+							"  pm.expect(body, \"Resposta não é JSON\").to.be.an(\"object\").that.is.not.null;",
+							"});",
+							"",
+							"let contentArray = null;",
+							"let pagination = null;",
+							"",
+							"if (body && Array.isArray(body)) {",
+							"  contentArray = body;",
+							"} else if (body && typeof body === \"object\" && Array.isArray(body.content)) {",
+							"  contentArray = body.content;",
+							"  pagination = {",
+							"    pageNumber: body?.pageable?.pageNumber,",
+							"    pageSize: body?.pageable?.pageSize,",
+							"    totalElements: body?.totalElements,",
+							"    totalPages: body?.totalPages,",
+							"    number: body?.number,",
+							"    numberOfElements: body?.numberOfElements,",
+							"    first: body?.first,",
+							"    last: body?.last",
+							"  };",
+							"}",
+							"",
+							"pm.test(\"Response contém lista de funcionários\", function () {",
+							"  pm.expect(contentArray, \"Não foi possível localizar a lista de funcionários (array raiz ou content[])\").to.be.an(\"array\");",
+							"});",
+							"",
+							"if (contentArray) {",
+							"  pm.test(\"Lista de funcionários não está vazia\", function () {",
+							"    pm.expect(contentArray.length, \"Nenhum funcionário retornado\").to.be.greaterThan(0);",
+							"  });",
+							"",
+							"  pm.test(\"Cada funcionário possui campos esperados e tipos válidos\", function () {",
+							"    contentArray.forEach((f, idx) => {",
+							"      console.log(`Funcionário [${idx}]:`, f);",
+							"      ",
+							"      pm.expect(f, `Item ${idx} não é objeto`).to.be.an(\"object\");",
+							"      ",
+							"      pm.expect(f, `idFuncionario ausente em item ${idx}`).to.have.property(\"idFuncionario\");",
+							"      pm.expect(",
+							"        f.idFuncionario,",
+							"        `idFuncionario inválido no item ${idx} (esperado number ou string não vazia)`",
+							"      ).to.satisfy(v => typeof v === \"number\" || (typeof v === \"string\" && v.trim() !== \"\"));",
+							"",
+							"      pm.expect(f, `nomeUsuario ausente em item ${idx}`).to.have.property(\"nomeUsuario\");",
+							"      pm.expect(",
+							"        f.nomeUsuario,",
+							"        `nomeUsuario inválido no item ${idx} (string não vazia)`",
+							"      ).to.be.a(\"string\").and.to.satisfy(s => s.trim() !== \"\");",
+							"",
+							"      pm.expect(f, `email ausente em item ${idx}`).to.have.property(\"email\");",
+							"      pm.expect(",
+							"        f.email,",
+							"        `email inválido no item ${idx} (string não vazia)`",
+							"      ).to.be.a(\"string\").and.to.satisfy(s => s.trim() !== \"\");",
+							"",
+							"      pm.expect(f, `senha ausente em item ${idx}`).to.have.property(\"senha\");",
+							"      const senhaVal = f.senha;",
+							"",
+							"      if (senhaVal === null) {",
+							"        console.log(`senha é null no item ${idx}`);",
+							"      } else if (typeof senhaVal === \"string\") {",
+							"        console.log(`senha é string no item ${idx}:`, senhaVal);",
+							"      } else if (typeof senhaVal === \"object\") {",
+							"        console.log(`senha é objeto no item ${idx}:`, senhaVal);",
+							"      } else {",
+							"        console.log(`senha tem tipo inesperado no item ${idx}:`, typeof senhaVal, senhaVal);",
+							"      }",
+							"      pm.expect([\"string\", \"object\"], `senha tipo inesperado no item ${idx}`).to.include(typeof senhaVal);",
+							"      pm.expect([\"string\", \"object\", \"null\"], `senha tipo inesperado no item ${idx}`).to.include(senhaVal === null ? \"null\" : typeof senhaVal);",
+							"    });",
+							"  });",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/funcionarios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"funcionarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patio - get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code 200 - Lista de Pátios\", function () {\r",
+							"    pm.expect(pm.response.code, \"Status code should be 200\").to.eql(200);\r",
+							"});\r",
+							"\r",
+							"let body = null;\r",
+							"try {\r",
+							"    body = pm.response.json();\r",
+							"} catch (e) {\r",
+							"    body = null;\r",
+							"}\r",
+							"\r",
+							"pm.test(\"JSON válido\", function () {\r",
+							"    pm.expect(body, \"Resposta não é JSON\").to.be.an(\"object\").that.is.not.null;\r",
+							"});\r",
+							"\r",
+							"let contentArray = null;\r",
+							"let pagination = null;\r",
+							"\r",
+							"if (body && Array.isArray(body)) {\r",
+							"    contentArray = body;\r",
+							"} else if (body && typeof body === \"object\" && Array.isArray(body.content)) {\r",
+							"    contentArray = body.content;\r",
+							"    pagination = {\r",
+							"        pageNumber: body?.pageable?.pageNumber,\r",
+							"        pageSize: body?.pageable?.pageSize,\r",
+							"        totalElements: body?.totalElements,\r",
+							"        totalPages: body?.totalPages,\r",
+							"        number: body?.number,\r",
+							"        numberOfElements: body?.numberOfElements,\r",
+							"        first: body?.first,\r",
+							"        last: body?.last\r",
+							"    };\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Response contém lista de pátios\", function () {\r",
+							"    pm.expect(contentArray, \"Não foi possível localizar a lista de pátios (array raiz ou content[])\").to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"if (contentArray) {\r",
+							"    pm.test(\"Lista de pátios não está vazia\", function () {\r",
+							"        pm.expect(contentArray.length, \"Nenhum pátio retornado\").to.be.greaterThan(0);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Cada pátio possui campos esperados e tipos válidos\", function () {\r",
+							"        contentArray.forEach((p, idx) => {\r",
+							"            pm.expect(p, `Item ${idx} não é objeto`).to.be.an(\"object\");\r",
+							"\r",
+							"            pm.expect(p, `idPatio ausente em item ${idx}`).to.have.property(\"idPatio\");\r",
+							"            pm.expect(\r",
+							"                p.idPatio,\r",
+							"                `idPatio inválido no item ${idx} (esperado number ou string não vazia)`\r",
+							"            ).to.satisfy(v => typeof v === \"number\" || (typeof v === \"string\" && v.trim() !== \"\"));\r",
+							"\r",
+							"            pm.expect(p, `localizacao ausente em item ${idx}`).to.have.property(\"localizacao\");\r",
+							"            pm.expect(\r",
+							"                p.localizacao,\r",
+							"                `localizacao inválido no item ${idx} (string não vazia)`\r",
+							"            ).to.be.a(\"string\").and.to.satisfy(s => s.trim() !== \"\");\r",
+							"\r",
+							"            pm.expect(p, `quantidadeVagas ausente em item ${idx}`).to.have.property(\"quantidadeVagas\");\r",
+							"            pm.expect(\r",
+							"                p.quantidadeVagas,\r",
+							"                `quantidadeVagas inválido no item ${idx} (deve ser número)`\r",
+							"            ).to.satisfy(v => typeof v === \"number\" && !isNaN(v));\r",
+							"        });\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"(function visualize() {\r",
+							"    const rows = Array.isArray(contentArray) ? contentArray : [];\r",
+							"    const mask = (s) => {\r",
+							"        if (typeof s !== \"string\") return \"\";\r",
+							"        if (s.length <= 2) return \"*\".repeat(s.length);\r",
+							"        return s[0] + \"*\".repeat(Math.max(1, s.length - 2)) + s[s.length - 1];\r",
+							"    };\r",
+							"\r",
+							"    const template = `\r",
+							"    <style>\r",
+							"      .pg { margin-top: 10px; font-family: sans-serif; }\r",
+							"      table { border-collapse: collapse; width: 100%; font-family: sans-serif; }\r",
+							"      th, td { border: 1px solid #ddd; padding: 8px; }\r",
+							"      th { background: #f5f5f5; text-align: left; }\r",
+							"      .empty { padding: 12px; color: #666; }\r",
+							"    </style>\r",
+							"    {{#if rows.length}}\r",
+							"      <table>\r",
+							"        <thead>\r",
+							"          <tr>\r",
+							"            <th>idPatio</th>\r",
+							"            <th>localizacao</th>\r",
+							"            <th>quantidadeVagas</th>\r",
+							"          </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"          {{#each rows}}\r",
+							"            <tr>\r",
+							"              <td>{{this.idPatio}}</td>\r",
+							"              <td>{{this.localizacao}}</td>\r",
+							"              <td>{{this.quantidadeVagas}}</td>\r",
+							"            </tr>\r",
+							"          {{/each}}\r",
+							"        </tbody>\r",
+							"      </table>\r",
+							"    {{else}}\r",
+							"      <div class=\"empty\">Nenhum pátio encontrado.</div>\r",
+							"    {{/if}}\r",
+							"\r",
+							"    {{#if pagination}}\r",
+							"      <div class=\"pg\">\r",
+							"        <strong>Paginação</strong><br/>\r",
+							"        Página: {{pagination.number}} / {{pagination.totalPages}}<br/>\r",
+							"        Tamanho da página: {{pagination.pageSize}}<br/>\r",
+							"        Total de elementos: {{pagination.totalElements}}<br/>\r",
+							"        Primeira página: {{pagination.first}} | Última página: {{pagination.last}}<br/>\r",
+							"        Elementos nesta página: {{pagination.numberOfElements}}\r",
+							"      </div>\r",
+							"    {{/if}}\r",
+							"  `;\r",
+							"\r",
+							"    function constructVisualizerPayload() {\r",
+							"        const safeRows = rows.map(r => ({\r",
+							"            idPatio: r?.idPatio,\r",
+							"            localizacao: r?.localizacao,\r",
+							"            quantidadeVagas: r?.quantidadeVagas\r",
+							"        }));\r",
+							"        return { rows: safeRows, pagination };\r",
+							"    }\r",
+							"\r",
+							"    pm.visualizer.set(template, constructVisualizerPayload());\r",
+							"})();\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"baseUrl:\", pm.collectionVariables.get(\"baseUrl\"));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/patios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"patios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cliente - get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response has a 'content' property that is an array",
+							"pm.test(\"Response has 'content' property that is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('content');",
+							"    pm.expect(jsonData.content).to.be.an('array');",
+							"});",
+							"",
+							"// Test: Array elements in 'content' have required properties",
+							"pm.test(\"Content array elements have required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    if (jsonData.content && jsonData.content.length > 0) {",
+							"        jsonData.content.forEach(function(cliente) {",
+							"            pm.expect(cliente).to.have.property('idCliente');",
+							"            pm.expect(cliente).to.have.property('nome');",
+							"            pm.expect(cliente).to.have.property('email');",
+							"        });",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/clientes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "moto - get por {id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idMoto');",
+							"    pm.expect(jsonData).to.have.property('modelo');",
+							"    pm.expect(jsonData).to.have.property('placa');",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"});",
+							"",
+							"// Test: Properties have correct types",
+							"pm.test(\"Properties have correct types\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.idMoto).to.be.a('number');",
+							"    pm.expect(jsonData.modelo).to.be.a('string');",
+							"    pm.expect(jsonData.placa).to.be.a('string');",
+							"    pm.expect(jsonData.status).to.be.a('string');",
+							"});"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/motos/{{motoId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"motos",
+						"{{motoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionarios - get por {id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idFuncionario');",
+							"    pm.expect(jsonData).to.have.property('nomeUsuario');",
+							"});",
+							"",
+							"// Test: Properties have correct types",
+							"pm.test(\"Properties have correct types\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.idFuncionario).to.be.a('number');",
+							"    pm.expect(jsonData.nomeUsuario).to.be.a('string');",
+							"});"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/funcionarios/{{funcionarioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"funcionarios",
+						"{{funcionarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patios - get por {id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be valid JSON",
+							"pm.test(\"Response is valid JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response has required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"idPatio\");",
+							"    pm.expect(jsonData).to.have.property(\"localizacao\");",
+							"    pm.expect(jsonData).to.have.property(\"quantidadeVagas\");",
+							"});",
+							"",
+							"// Test: Validate property types",
+							"pm.test(\"Property types are correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.idPatio).to.be.a(\"number\");",
+							"    pm.expect(jsonData.localizacao).to.be.a(\"string\");",
+							"    pm.expect(jsonData.quantidadeVagas).to.be.a(\"number\");",
+							"});",
+							"",
+							"// Test: Response time is acceptable",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/patios/{{patioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"patios",
+						"{{patioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cliente - get por {id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idCliente');",
+							"    pm.expect(jsonData).to.have.property('nome');",
+							"    pm.expect(jsonData).to.have.property('email');",
+							"    pm.expect(jsonData).to.have.property('cpf');",
+							"});",
+							"",
+							"// Test: Properties have correct types",
+							"pm.test(\"Properties have correct types\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.idCliente).to.be.a('number');",
+							"    pm.expect(jsonData.nome).to.be.a('string');",
+							"    pm.expect(jsonData.email).to.be.a('string');",
+							"    pm.expect(jsonData.cpf).to.be.a('string');",
+							"});"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"clientes",
+						"{{clienteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Moto - atualização",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code should be 200 (OK)",
+							"pm.test(\"Status code is 201 OK\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test: Response should be JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test: Response should have required properties",
+							"pm.test(\"Response has required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('idMoto');",
+							"    pm.expect(jsonData).to.have.property('modelo');",
+							"    pm.expect(jsonData).to.have.property('placa');",
+							"});",
+							"",
+							"// Verify the update by fetching the moto",
+							"var motoId = pm.environment.get(\"motoId\");",
+							"if (motoId) {",
+							"    pm.test(\"Verify moto was updated\", function (done) {",
+							"        pm.sendRequest({",
+							"            url: pm.environment.get(\"baseUrl\") + \"/api/v1/Motos/\" + motoId,",
+							"            method: \"GET\"",
+							"        }, function (err, response) {",
+							"            if (err) {",
+							"                console.error(\"Error verifying update:\", err);",
+							"                done();",
+							"                return;",
+							"            }",
+							"            ",
+							"            pm.expect(response).to.have.property('code', 200);",
+							"            var updatedMoto = response.json();",
+							"            pm.expect(updatedMoto).to.have.property('idMoto', parseInt(motoId));",
+							"            console.log(\"Moto update verified successfully\");",
+							"            done();",
+							"        });",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idMoto\": 1,\r\n    \"modelo\": \"Honda PCX\",\r\n    \"placa\": \"ABC1323\",\r\n    \"status\": \"Disponível\",\r\n    \"setor\": \"Bom\"\r\n}\r\n    "
+				},
+				"url": {
+					"raw": "{{baseUrl}}/motos/{{motoId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"motos",
+						"{{motoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario - atualização",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201 - Funcionário atualizado\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Dados atualizados corretamente\", function() {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.nomeUsuario).to.eql(\"funcionario_atualizado\");\r",
+							"    pm.expect(response.email).to.eql(\"func.atualizado@empresa.com\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nomeUsuario\": \"funcionario_atualizado\",\r\n    \"email\": \"func.atualizado@empresa.com\",\r\n    \"senha\": \"novasenha456\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/funcionarios/{{funcionarioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"funcionarios",
+						"{{funcionarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cliente - Atualização (PUT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201 - Cliente atualizado\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Dados atualizados corretamente\", function() {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.nome).to.eql(\"João Silva Atualizado\");\r",
+							"    pm.expect(response.telefone).to.eql(\"11888888888\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"João Silva Atualizado\",\r\n    \"email\": \"joao.atualizado@email.com\",\r\n    \"cpf\": \"123.456.789-09\",\r\n    \"telefone\": \"11888888888\",\r\n    \"dataNascimento\": \"1990-01-15\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/clientes/{{clienteId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"clientes",
+						"{{clienteId}}"
+					]
+				},
+				"description": "Updates an existing cliente by ID. PUT http://localhost:5147/api/v1/clientes/{{clienteId}}. Method: PUT. URL: http://localhost:5147/api/v1/clientes/{{clienteId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patio - atulização",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201 - Pátio atualizado\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Dados atualizados corretamente\", function() {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.localizacao).to.eql(\"Rio de Janeiro - Copacabana\");\r",
+							"    pm.expect(response.quantidadeVagas).to.eql(30);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"localizacao\": \"Rio de Janeiro - Copacabana\",\r\n    \"quantidadeVagas\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/patios/{{patioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"patios",
+						"{{patioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Moto - Exclusão",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Test: Status code should be 204 (No Content) or 200 (OK)",
+							"pm.test(\"Status code is 204 No Content or 200 OK\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+							"});",
+							"",
+							"// Verify the deletion by attempting to fetch the moto",
+							"var motoId = pm.environment.get(\"motoId\");",
+							"if (motoId) {",
+							"    pm.test(\"Verify moto was deleted\", function (done) {",
+							"        pm.sendRequest({",
+							"            url: pm.environment.get(\"baseUrl\") + \"/api/v1/Motos/\" + motoId,",
+							"            method: \"GET\"",
+							"        }, function (err, response) {",
+							"            if (err) {",
+							"                console.error(\"Error verifying deletion:\", err);",
+							"                done();",
+							"                return;",
+							"            }",
+							"            ",
+							"            // Expect 404 Not Found after deletion",
+							"            pm.expect(response.code).to.equal(404);",
+							"            console.log(\"Moto deletion verified - resource not found (404)\");",
+							"            done();",
+							"        });",
+							"    });",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/motos/{{motoId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"motos",
+						"{{motoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcionario - Exclusão (DELETE)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 - Funcionário deletado\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/funcionarios/{{funcionarioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"funcionarios",
+						"{{funcionarioId}}"
+					]
+				},
+				"description": "Deletes a funcionario by ID. DELETE http://localhost:5147/api/v1/funcionarios/{{funcionarioId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patio - Exclusão",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 - Pátio deletado\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/patios/{{patioId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"patios",
+						"{{patioId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "motoId",
+			"value": ""
+		},
+		{
+			"key": "clienteId",
+			"value": ""
+		},
+		{
+			"key": "clienteNome",
+			"value": ""
+		},
+		{
+			"key": "clienteEmail",
+			"value": ""
+		},
+		{
+			"key": "clienteCpf",
+			"value": ""
+		},
+		{
+			"key": "clienteTelefone",
+			"value": ""
+		},
+		{
+			"key": "clienteNascimento",
+			"value": ""
+		},
+		{
+			"key": "lastClienteCreateRequestPayload",
+			"value": ""
+		},
+		{
+			"key": "lastClienteCreateResponseBody",
+			"value": ""
+		},
+		{
+			"key": "funcionarioId",
+			"value": ""
+		},
+		{
+			"key": "patioId",
+			"value": ""
+		}
+	]
+}
